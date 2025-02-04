@@ -1,7 +1,8 @@
 import plotly.express as px
-
 # Load data and compute static values
 from shinywidgets import render_plotly
+
+from pathlib import Path
 
 from shiny import ui, render, App, reactive
 import xarray as xr
@@ -13,13 +14,13 @@ app_ui = ui.page_fillable(
     ui.input_select(
         "variable",  
         "Select an climate variable below:", 
-        {"precip": "Precipitation", "SSR": "Solar Radiation", "temp": "Temperature"}
+        {"precip": "Precipitation", "ssr": "Solar Radiation", "temp": "Temperature"}
     ),
 
     ui.input_selectize(
         "oscillation",  
         "Select type of oscillation below:",  
-        {"A":"La Nina", "E":"El Nino", "N": "Neutral"}, 
+        {"lanina":"La Nina", "elnino":"El Nino", "normal": "Neutral"}, 
     ),
 
     ui.input_select(
@@ -51,11 +52,23 @@ app_ui = ui.page_fillable(
     ),
 )
 
+
+
 def server(input, output, session):
-    def pvaluemap():
-        return
     
+    @render.image
+    def pvaluemap():
+        #print(Path(__file__).parent /'static'/'ENSO Teleconnection Maps'/f'{input.variable()}'/f"pvalue_maps_{input.oscillation()}.png")
+        #print(input.variable())
+        #print(input.oscillation())
+        img = {"src": str(Path(__file__).parent /'static'/'ENSO Teleconnection Maps'/f'{input.variable()}'/f"pvalue_maps_{input.oscillation()}.png"), "width": "100%"}  
+        return img
+    
+    @render.image
     def seasonalmap():
-        return
+        print(input.season())
+        print(Path(__file__).parent /'static'/'ENSO Teleconnection Maps'/f'{input.variable()}'/f"prob_{input.oscillation()}_season_{input.season()}.png")
+        img = {"src": str(Path(__file__).parent /'static'/'ENSO Teleconnection Maps'/f'{input.variable()}'/f"prob_{input.oscillation()}_season_{input.season()}.png"), "width": "100%"}  
+        return img
 
 app=App(app_ui, server)
