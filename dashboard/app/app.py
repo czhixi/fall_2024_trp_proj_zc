@@ -9,7 +9,7 @@ import xarray as xr
 import plotly.express as px
 import plotly.graph_objects as go
 
-app_ui = ui.page_fillable(
+app_ui = ui.page_auto(
     ui.h1("ENSO Teleconnection Maps"),
     ui.input_select(
         "variable",  
@@ -43,12 +43,12 @@ app_ui = ui.page_fillable(
 
     ui.card(
         ui.card_header("P-Value"),
-        ui.output_image("pvaluemap")
+        ui.output_image("pvaluemap", height="100%")
     ),
 
     ui.card(
         ui.card_header("Seasonal"),
-        ui.output_image("seasonalmap")
+        ui.output_image("seasonalmap", height="100%")
     ),
 )
 
