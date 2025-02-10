@@ -1,7 +1,7 @@
 import plotly.express as px
 # Load data and compute static values
 from shinywidgets import render_plotly
-
+import requests
 from pathlib import Path
 
 from shiny import ui, render, App, reactive
@@ -14,7 +14,10 @@ app_ui = ui.page_auto(
     ui.input_select(
         "variable",  
         "Select an climate variable below:", 
-        {"precip": "Precipitation", "ssr": "Solar Radiation", "temp": "Temperature"}
+        {"precip": "Precipitation", 
+         "ssr": "Solar Radiation", 
+         "temp": "Temperature",
+         "snowcover":"Snow Cover"}
     ),
 
     ui.input_selectize(
@@ -43,32 +46,39 @@ app_ui = ui.page_auto(
 
     ui.card(
         ui.card_header("P-Value"),
-        ui.output_image("pvaluemap", height="100%")
+        ui.output_ui("pvaluemap", height="100%")
     ),
 
     ui.card(
         ui.card_header("Seasonal"),
-        ui.output_image("seasonalmap", height="100%")
+        ui.output_ui("seasonalmap", height="100%")
     ),
 )
 
 
 
 def server(input, output, session):
-    
-    @render.image
+    @render.ui
+    #@render.image(delete_file=True)
     def pvaluemap():
+        #response = requests.get(f"https://raw.githubusercontent.com/blackteacatsu/fall_2024_trp_proj/main/scripts/for_kris/outcome/map/{input.variable()}/pvalue_maps_{input.oscillation()}.png")
+        #local = f"{input.variable()}/pvalue_maps_{input.oscillation()}.png"
+        #if response.status_code == 200:
+            #with open(local, "wb") as f:
+                #f.write(response.content)
+
         #print(Path(__file__).parent /'static'/'ENSO Teleconnection Maps'/f'{input.variable()}'/f"pvalue_maps_{input.oscillation()}.png")
         #print(input.variable())
         #print(input.oscillation())
-        img = {"src": str(Path(__file__).parent /'static'/'ENSO Teleconnection Maps'/f'{input.variable()}'/f"pvalue_maps_{input.oscillation()}.png"), "width": "100%"}  
-        return img
+        #img = {'src': f"https://raw.githubusercontent.com/blackteacatsu/fall_2024_trp_proj/main/scripts/for_kris/outcome/map/{input.variable()}/pvalue_maps_{input.oscillation()}.png"}
+        return ui.tags.img(src=f"https://raw.githubusercontent.com/blackteacatsu/fall_2024_trp_proj/main/scripts/for_kris/outcome/map/{input.variable()}/pvalue_maps_{input.oscillation()}.png", width = "100%")
     
-    @render.image
+    @render.ui
+    #@render.image(delete_file=True)
     def seasonalmap():
-        print(input.season())
-        print(Path(__file__).parent /'static'/'ENSO Teleconnection Maps'/f'{input.variable()}'/f"prob_{input.oscillation()}_season_{input.season()}.png")
-        img = {"src": str(Path(__file__).parent /'static'/'ENSO Teleconnection Maps'/f'{input.variable()}'/f"prob_{input.oscillation()}_season_{input.season()}.png"), "width": "100%"}  
-        return img
+        #print(input.season())
+        #print(Path(__file__).parent /'static'/'ENSO Teleconnection Maps'/f'{input.variable()}'/f"prob_{input.oscillation()}_season_{input.season()}.png")
+        #img = {"src": f"https://raw.githubusercontent.com/blackteacatsu/fall_2024_trp_proj/main/scripts/for_kris/outcome/map/{input.variable()}/prob_{input.oscillation()}_season_{input.season()}.png", "width": "100%"}  
+        return ui.tags.img(src=f"https://raw.githubusercontent.com/blackteacatsu/fall_2024_trp_proj/main/scripts/for_kris/outcome/map/{input.variable()}/prob_{input.oscillation()}_season_{input.season()}.png", width = "100%")
 
 app=App(app_ui, server)
